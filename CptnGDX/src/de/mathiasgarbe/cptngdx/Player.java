@@ -47,18 +47,14 @@ public class Player extends GameObject {
 	private Array<PooledEffect> effects;
 	
 	public int score;
+	
+	private boolean stillJumping;
+	private long jumpStart;
 		
 	public Player(SpriteBatch batch, World world)
 	{
 		this.batch = batch;
 		this.world = world;
-		
-		this.position = new Vector2(100, 100);
-		this.velocity = new Vector2(0, 0);
-		this.score = 0;
-		
-		this.facingRight = true;
-		this.state = PlayerState.JUMPING;
 		
 		// Load player texture
 		this.player = new ArrayList<TextureRegion>();
@@ -85,6 +81,18 @@ public class Player extends GameObject {
 		
 		effectPool = new ParticleEffectPool(effect, 1, 2);
 
+		this.reset(0, 0);
+	}
+	
+	public void reset(float x, float y)
+	{
+		this.position = new Vector2(x, y);
+		this.velocity = new Vector2(0, 0);
+		this.score = 0;
+		this.facingRight = true;
+		this.state = PlayerState.JUMPING;
+		this.stillJumping = false;
+		this.jumpStart = 0;
 	}
 	
 	@Override
@@ -174,10 +182,26 @@ public class Player extends GameObject {
 			}
 		}
 		
-		if(keyJump && world.isColliding(position.x, position.y + 2) && velocity.y == 0)
+		if(keyJump)
 		{
-			velocity.add(0, -11);
-			addDustParticles();
+			if(world.isColliding(position.x, position.y + 2) && velocity.y == 0)
+			{
+				//velocity.add(0, -5.5f);
+				velocity.y = -7;
+				addDustParticles();
+				jumpStart = TimeUtils.millis();
+				stillJumping = true;
+			}
+			else if(stillJumping && jumpStart + 150 >= TimeUtils.millis())
+			{
+				//velocity.add(0, -0.8f);
+				velocity.y = -7;
+				
+			}
+		}
+		else
+		{
+			stillJumping = false;
 		}
 		
 		velocity.add(0, 0.5f);
@@ -196,6 +220,7 @@ public class Player extends GameObject {
 				else
 				{
 					velocity.y = 0;
+					stillJumping = false;
 				}
 			}
 		}
@@ -252,6 +277,7 @@ public class Player extends GameObject {
 			batch.draw(playerRegion, offset.x + this.position.x, offset.y + this.position.y);
 		}
 
+		// We need to transform the particles back
 		Matrix4 transform = new Matrix4();
 		for (int i = effects.size - 1; i >= 0; i--) {
 			transform.setToTranslation(offset.x, offset.y, 0);

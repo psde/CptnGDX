@@ -9,8 +9,8 @@ public class Main {
 		cfg.title = "CptnGDX";
 		cfg.useGL20 = true;
 		cfg.resizable = false;
-		cfg.width = 800;
-		cfg.height = 600;
+		cfg.width = 700;
+		cfg.height = 500;
 		
 		new LwjglApplication(new CptnGDXGame(), cfg);
 	}

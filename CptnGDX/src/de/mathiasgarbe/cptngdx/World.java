@@ -43,8 +43,6 @@ public class World extends GameObject {
 			tileRegion.flip(false, true);
 			this.tiles.add(tileRegion);
 		}
-		
-		loadMap("data/map2.txt");
 	}
 	
 	@Override
@@ -87,19 +85,13 @@ public class World extends GameObject {
 				map[x][y] = tile;
 			}
 		}
-		
-		// Second processing step, change dirt to grass if it has access to light
-		/*for(int x=1; x<map.length-1; x++)
-		{
-			for(int y=1; y<map[x].length-1; y++)
-			{
-				TileType current = map[x][y];
-				TileType above = map[x][y-1];
-				
-				if(current == TileType.DIRT && above == TileType.NOTHING)
-					map[x][y] = TileType.GRASS;
-			}
-		}*/
+	}
+	
+	public boolean isFinished()
+	{
+		if(gems.size() == 0)
+			return true;
+		return false;
 	}
 	
 	@Override
